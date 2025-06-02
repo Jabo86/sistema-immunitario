@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sito sul sistema immunitario per l'Operatore Socio-Sanitario (OSS): scopri immunità innata, specifica e quiz interattivi.">
+    <meta name="keywords" content="sistema immunitario, OSS, immunità innata, immunità specifica, linfociti, quiz sistema immunitario">
+    <title>Il Sistema Immunitario</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #0d1b2a, #1b263b);
+            color: #e0e0e0;
+            overflow-x: hidden;
+            position: relative;
+            font-size: 18px;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://www.transparenttextures.com/patterns/circuit-pattern.png');
+            opacity: 0.05;
+            z-index: -1;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px;
+            position: relative;
+        }
+        header {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        header h1 {
+            margin: 0;
+            font-size: 3.5em;
+            color: #00d4ff;
+            text-shadow: 0 0 10px #00d4ff;
+            animation: glow 2s infinite alternate;
+        }
+        header p {
+            margin: 10px 0 0;
+            font-size: 1.2em;
+            color: #ecf0f1;
+        }
+        nav {
+            background: #34495e;
+            padding: 10px 0;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        nav a {
+            color: #ecf0f1;
+            text-decoration: none;
+            margin: 0 20px;
+            font-size: 1.2em;
+            transition: color 0.3s ease;
+        }
+        nav a:hover {
+            color: #3498db;
+        }
+        section {
+            background: rgba(20, 40, 60, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+            margin-bottom: 50px;
+            animation: fadeIn 1.5s ease-in;
+            border: 1px solid #00d4ff;
+        }
+        section h2 {
+            color: #00d4ff;
+            font-size: 2.5em;
+            text-align: center;
+            margin-bottom: 40px;
+            text-shadow: 0 0 5px #00d4ff;
+        }
+        section h3 {
+            color: #00d4ff;
+            font-size: 1.5em;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        section p, section ul {
+            font-size: 1.1em;
+            margin-bottom: 20px;
+        }
+        section ul {
+            list-style-type: disc;
+            padding-left: 40px;
+        }
+        section ul ul {
+            list-style-type: circle;
+            padding-left: 30px;
+        }
+        .quiz-container {
+            margin-top: 40px;
+            text-align: center;
+        }
+        .quiz-selector {
+            margin-bottom: 20px;
+        }
+        .quiz-selector select {
+            padding: 10px;
+            font-size: 1.2em;
+            background: rgba(30, 50, 70, 0.95);
+            color: #e0e0e0;
+            border: 1px solid #00d4ff;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .quiz-timer {
+            font-size: 1.5em;
+            color: #00d4ff;
+            margin-bottom: 20px;
+        }
+        .quiz-balls {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .quiz-ball {
+            width: 40px;
+            height: 40px;
+            background: rgba(30, 50, 70, 0.95);
+            border: 2px solid #00d4ff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1em;
+            color: #e0e0e0;
+            transition: background 0.3s ease;
+        }
+        .quiz-ball.correct {
+            background: #00ff00;
+            color: #000;
+            box-shadow: 0 0 10px #00ff00;
+        }
+        .quiz-ball.incorrect {
+            background: #ff0000;
+            color: #000;
+            box-shadow: 0 0 10px #ff0000;
+        }
+        .quiz-question {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #00d4ff;
+        }
+        .quiz-options {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .quiz-option {
+            background: rgba(30, 50, 70, 0.95);
+            padding: 15px 30px;
+            border-radius: 10px;
+            border: 1px solid #00d4ff;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            font-size: 1.1em;
+        }
+        .quiz-option:hover {
+            background: rgba(0, 212, 255, 0.3);
+        }
+        .quiz-feedback {
+            margin-top: 20px;
+            font-size: 1.2em;
+            display: none;
+        }
+        .correct {
+            color: #00ff00;
+        }
+        .incorrect {
+            color: #ff0000;
+        }
+        .quiz-result {
+            margin-top: 20px;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+        .retry-button {
+            margin-top: 20px;
+            padding: 15px 30px;
+            background: #00d4ff;
+            color: #000;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .retry-button:hover {
+            background: #3498db;
+        }
+        footer {
+            background: #2c3e50;
+            color: #ecf0f1;
+            text-align: center;
+            padding: 20px 0;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+        footer p {
+            margin: 0;
+            font-size: 1em;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes glow {
+            from { text-shadow: 0 0 5px #00d4ff, 0 0 10px #00d4ff; }
+            to { text-shadow: 0 0 10px #00d4ff, 0 0 20px #00d4ff; }
+        }
+        @media (max-width: 768px) {
+            nav a {
+                display: block;
+                margin: 10px 0;
+            }
+            section {
+                padding: 20px;
+            }
+            header h1 {
+                font-size: 2.5em;
+            }
+            header p {
+                font-size: 1em;
+            }
+            .quiz-options {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .quiz-ball {
+                width: 30px;
+                height: 30px;
+                font-size: 0.8em;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <h1>Il Sistema Immunitario</h1>
+        <p>Struttura e Funzioni per l'OSS</p>
+    </header>
+
+    <nav>
+        <a href="#introduzione">Introduzione</a>
+        <a href="#immunita-innata">Immunità Innata</a>
+        <a href="#immunita-specifica">Immunità Specifica</a>
+        <a href="#quiz">Quiz</a>
+    </nav>
+
+    <div class="container">
+        <section id="introduzione">
+            <h2>Introduzione al Sistema Immunitario</h2>
+            <p>Il sistema immunitario è formato sia da meccanismi di difesa non specifici (l’immunità innata), sia da meccanismi di difesa altamente specializzati che conferiscono resistenza contro particolari patogeni (l’immunità specifica). È l’arma di difesa dell’organismo contro i patogeni che potrebbero scatenare malattie. Per farlo sfrutta sistemi meccanici (come la pelle e il muco), cellule (i globuli bianchi) e molecole prodotte da cellule e tessuti. Alcune cellule agiscono in modo specializzato, riconoscendo particolari patogeni e creando una “memoria” della loro esistenza, in modo da poterli riconoscere e affrontare più efficacemente in caso di un nuovo incontro.</p>
+            <p>Nel sangue sono inoltre presenti i globuli rossi e le piastrine. I primi permettono all’ossigeno raccolto nei polmoni di essere distribuito a tutte le cellule e, allo stesso tempo, di raccogliere l’anidride carbonica prodotta da queste e trasportarla ai polmoni per eliminarla. Le seconde, invece, permettono di riparare eventuali lesioni e di evitare così emorragie pericolose per la salute.</p>
+        </section>
+
+        <section id="immunita-innata">
+            <h2>L’Immunità Innata</h2>
+            <p>L’immunità innata è resa possibile da diversi meccanismi: la pelle, che costituisce una vera e propria barriera all’ingresso dei patogeni; il muco, in grado di intrappolare i microbi; la saliva e i succhi gastrici che aiutano a difendere l’organismo in modo non specifico. Esiste, poi, una linea di difesa nel sangue, dove sono presenti globuli bianchi e molecole prodotte da cellule e tessuti che aiutano a sbarazzarsi di microbi pericolosi per la salute.</p>
+        </section>
+
+        <section id="immunita-specifica">
+            <h2>L’Immunità Specifica</h2>
+            <p>L’immunità specifica è invece associata all’attività di un tipo specifico di globuli bianchi, i linfociti. Questi ultimi si trovano sia nel sangue sia in tessuti specializzati localizzati negli organi del sistema linfatico: linfonodi, milza e timo. Le cellule dell’immunità circolano nell’organismo attraverso i vasi linfatici (nella linfa) e i vasi sanguigni (nel sangue). C’è, però, anche un altro fattore che collega linfa e sangue: la maggior parte dei globuli bianchi viene prodotta dal sistema emopoietico, che si occupa anche della sintesi degli altri elementi figurati del sangue: globuli rossi e piastrine.</p>
+        </section>
+
+        <section id="quiz">
+            <h2>Quiz: Testa le Tue Conoscenze sul Sistema Immunitario</h2>
+            <p>Seleziona un quiz e rispondi alle 30 domande entro 30 minuti. Le palline si illumineranno man mano che procedi!</p>
+            <div class="quiz-container">
+                <div class="quiz-selector">
+                    <select id="quiz-select" onchange="selectQuiz()">
+                        <option value="0">Seleziona un Quiz</option>
+                        <option value="1">Quiz 1</option>
+                        <option value="2">Quiz 2</option>
+                        <option value="3">Quiz 3</option>
+                        <option value="4">Quiz 4</option>
+                        <option value="5">Quiz 5</option>
+                    </select>
+                </div>
+                <div class="quiz-timer" id="quiz-timer" style="display: none;">Tempo rimanente: 30:00</div>
+                <div class="quiz-balls" id="quiz-balls" style="display: none;"></div>
+                <div class="quiz-question" id="quiz-question"></div>
+                <div class="quiz-options" id="quiz-options"></div>
+                <div class="quiz-feedback" id="quiz-feedback"></div>
+                <div class="quiz-result" id="quiz-result"></div>
+                <button class="retry-button" id="retry-button" style="display: none;">Riprova</button>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <p>© 2025 Il Sistema Immunitario - Tutti i diritti riservati</p>
+    </footer>
+
+    <script>
+        const allQuestions = [
+            // Quiz 1
+            [
+                { question: "Quali sono i due tipi di immunità?", options: ["Innata e specifica", "Acquisita e passiva", "Meccanica e chimica", "Attiva e innata"], correct: "Innata e specifica" },
+                { question: "Cosa forma una barriera contro i patogeni?", options: ["Pelle", "Sangue", "Linfa", "Mucosa"], correct: "Pelle" },
+                { question: "Quale sostanza intrappola i microbi?", options: ["Muco", "Saliva", "Succhi gastrici", "Sangue"], correct: "Muco" },
+                { question: "Quali cellule sono presenti nel sangue per l’immunità innata?", options: ["Globuli bianchi", "Globuli rossi", "Piastrine", "Linfociti"], correct: "Globuli bianchi" },
+                { question: "Quale tipo di immunità usa i linfociti?", options: ["Specifica", "Innata", "Meccanica", "Chimica"], correct: "Specifica" },
+                { question: "Dove si trovano i linfociti?", options: ["Linfonodi", "Polmoni", "Fegato", "Reni"], correct: "Linfonodi" },
+                { question: "Quale organo linfatico è coinvolto nell’immunità specifica?", options: ["Timo", "Pelle", "Stomaco", "Cuore"], correct: "Timo" },
+                { question: "Attraverso cosa circolano le cellule immunitarie?", options: ["Vasi linfatici", "Arterie", "Vene", "Capillari"], correct: "Vasi linfatici" },
+                { question: "Chi produce i globuli bianchi?", options: ["Sistema emopoietico", "Fegato", "Milza", "Polmoni"], correct: "Sistema emopoietico" },
+                { question: "Quale sistema difende dai patogeni?", options: ["Immunitario", "Nervoso", "Circolatorio", "Endocrino"], correct: "Immunitario" },
+                { question: "Quale meccanismo crea una memoria dei patogeni?", options: ["Immunità specifica", "Immunità innata", "Pelle", "Muco"], correct: "Immunità specifica" },
+                { question: "Cosa trasporta l’ossigeno nel sangue?", options: ["Globuli rossi", "Globuli bianchi", "Piastrine", "Linfa"], correct: "Globuli rossi" },
+                { question: "Cosa previene le emorragie?", options: ["Piastrine", "Globuli bianchi", "Globuli rossi", "Linfociti"], correct: "Piastrine" },
+                { question: "Quale fluido contiene i linfociti?", options: ["Linfa", "Sangue", "Saliva", "Muco"], correct: "Linfa" },
+                { question: "Quale organo linfatico filtra il sangue?", options: ["Milza", "Timo", "Linfonodi", "Pelle"], correct: "Milza" },
+                { question: "Quale meccanismo non specifico usa la saliva?", options: ["Immunità innata", "Immunità specifica", "Memoria", "Linfociti"], correct: "Immunità innata" },
+                { question: "Dove viene distribuito l’ossigeno?", options: ["Cellule", "Polmoni", "Fegato", "Cuore"], correct: "Cellule" },
+                { question: "Cosa elimina l’anidride carbonica?", options: ["Globuli rossi", "Piastrine", "Globuli bianchi", "Linfa"], correct: "Globuli rossi" },
+                { question: "Quale tessuto è specializzato per i linfociti?", options: ["Linfonodi", "Pelle", "Sangue", "Mucosa"], correct: "Linfonodi" },
+                { question: "Quale sistema produce anche globuli rossi?", options: ["Emopoietico", "Linfatico", "Circolatorio", "Nervoso"], correct: "Emopoietico" },
+                { question: "Quale barriera è parte dell’immunità innata?", options: ["Pelle", "Linfociti", "Memoria", "Anticorpi"], correct: "Pelle" },
+                { question: "Quale fluido è simile al sangue?", options: ["Linfa", "Muco", "Saliva", "Succhi gastrici"], correct: "Linfa" },
+                { question: "Quale cellula riconosce i patogeni?", options: ["Linfociti", "Globuli rossi", "Piastrine", "Neutrofili"], correct: "Linfociti" },
+                { question: "Dove si forma la memoria immunitaria?", options: ["Immunità specifica", "Immunità innata", "Pelle", "Muco"], correct: "Immunità specifica" },
+                { question: "Quale organo linfatico matura i linfociti T?", options: ["Timo", "Milza", "Linfonodi", "Sangue"], correct: "Timo" },
+                { question: "Quale meccanismo usa i succhi gastrici?", options: ["Immunità innata", "Immunità specifica", "Memoria", "Linfociti"], correct: "Immunità innata" },
+                { question: "Cosa trasporta le cellule immunitarie nel sangue?", options: ["Vasi sanguigni", "Vasi linfatici", "Capillari", "Arterie"], correct: "Vasi sanguigni" },
+                { question: "Quale cellula ripara le lesioni?", options: ["Piastrine", "Globuli bianchi", "Globuli rossi", "Linfociti"], correct: "Piastrine" },
+                { question: "Quale organo linfatico è nel torace?", options: ["Timo", "Milza", "Linfonodi", "Pelle"], correct: "Timo" },
+                { question: "Quale sistema collega linfa e sangue?", options: ["Emopoietico", "Linfatico", "Circolatorio", "Nervoso"], correct: "Emopoietico" }
+            ],
+            // Quiz 2
+            [
+                { question: "Quale immunità è non specifica?", options: ["Innata", "Specifica", "Acquisita", "Passiva"], correct: "Innata" },
+                { question: "Quale barriera impedisce l’ingresso dei patogeni?", options: ["Pelle", "Sangue", "Linfa", "Mucosa"], correct: "Pelle" },
+                { question: "Cosa intrappola i microbi nell’immunità innata?", options: ["Muco", "Saliva", "Succhi gastrici", "Linfociti"], correct: "Muco" },
+                { question: "Quali cellule combattono i microbi nel sangue?", options: ["Globuli bianchi", "Globuli rossi", "Piastrine", "Linfociti"], correct: "Globuli bianchi" },
+                { question: "Quale immunità riconosce patogeni specifici?", options: ["Specifica", "Innata", "Meccanica", "Chimica"], correct: "Specifica" },
+                { question: "Quale organo linfatico contiene linfociti?", options: ["Milza", "Polmoni", "Fegato", "Reni"], correct: "Milza" },
+                { question: "Dove maturano i linfociti T?", options: ["Timo", "Pelle", "Stomaco", "Cuore"], correct: "Timo" },
+                { question: "Dove circola la linfa?", options: ["Vasi linfatici", "Arterie", "Vene", "Capillari"], correct: "Vasi linfatici" },
+                { question: "Quale sistema produce le piastrine?", options: ["Emopoietico", "Fegato", "Milza", "Polmoni"], correct: "Emopoietico" },
+                { question: "Quale sistema protegge dalle malattie?", options: ["Immunitario", "Nervoso", "Circolatorio", "Endocrino"], correct: "Immunitario" },
+                { question: "Quale immunità crea una memoria?", options: ["Specifica", "Innata", "Pelle", "Muco"], correct: "Specifica" },
+                { question: "Quale cellula trasporta l’ossigeno?", options: ["Globuli rossi", "Globuli bianchi", "Piastrine", "Linfociti"], correct: "Globuli rossi" },
+                { question: "Quale cellula previene le emorragie?", options: ["Piastrine", "Globuli bianchi", "Globuli rossi", "Linfociti"], correct: "Piastrine" },
+                { question: "Quale fluido trasporta i linfociti?", options: ["Linfa", "Sangue", "Saliva", "Muco"], correct: "Linfa" },
+                { question: "Quale organo linfatico filtra i patogeni?", options: ["Linfonodi", "Timo", "Milza", "Pelle"], correct: "Linfonodi" },
+                { question: "Quale meccanismo innato usa la saliva?", options: ["Immunità innata", "Immunità specifica", "Memoria", "Linfociti"], correct: "Immunità innata" },
+                { question: "Dove viene raccolta l’anidride carbonica?", options: ["Cellule", "Polmoni", "Fegato", "Cuore"], correct: "Cellule" },
+                { question: "Quale cellula elimina l’anidride carbonica?", options: ["Globuli rossi", "Piastrine", "Globuli bianchi", "Linfa"], correct: "Globuli rossi" },
+                { question: "Quale organo è specializzato per l’immunità specifica?", options: ["Timo", "Pelle", "Sangue", "Mucosa"], correct: "Timo" },
+                { question: "Quale sistema sintetizza i globuli bianchi?", options: ["Emopoietico", "Linfatico", "Circolatorio", "Nervoso"], correct: "Emopoietico" },
+                { question: "Quale meccanismo innato usa il muco?", options: ["Immunità innata", "Immunità specifica", "Memoria", "Linfociti"], correct: "Immunità innata" },
+                { question: "Quale fluido è ricco di globuli bianchi?", options: ["Linfa", "Muco", "Saliva", "Succhi gastrici"], correct: "Linfa" },
+                { question: "Quale cellula crea la memoria immunitaria?", options: ["Linfociti", "Globuli rossi", "Piastrine", "Neutrofili"], correct: "Linfociti" },
+                { question: "Quale immunità usa la pelle?", options: ["Innata", "Specifica", "Acquisita", "Passiva"], correct: "Innata" },
+                { question: "Quale organo linfatico è nell’addome?", options: ["Milza", "Timo", "Linfonodi", "Pelle"], correct: "Milza" },
+                { question: "Quale meccanismo usa i succhi gastrici?", options: ["Immunità innata", "Immunità specifica", "Memoria", "Linfociti"], correct: "Immunità innata" },
+                { question: "Dove circolano le cellule nel sangue?", options: ["Vasi sanguigni", "Vasi linfatici", "Capillari", "Arterie"], correct: "Vasi sanguigni" },
+                { question: "Quale cellula coagula il sangue?", options: ["Piastrine", "Globuli bianchi", "Globuli rossi", "Linfociti"], correct: "Piastrine" },
+                { question: "Quale organo linfatico è nel torace?", options: ["Timo", "Milza", "Linfonodi", "Pelle"], correct: "Timo" },
+                { question: "Quale sistema produce globuli rossi?", options: ["Emopoietico", "Linfatico", "Circolatorio", "Nervoso"], correct: "Emopoietico" }
+            ],
+            // Quiz 3
+            [
+                { question: "Quale immunità è altamente specializzata?", options: ["Specifica", "Innata", "Meccanica", "Chimica"], correct: "Specifica" },
+                { question: "Quale barriera è parte dell’immunità innata?", options: ["Pelle", "Sangue", "Linfa", "Mucosa"], correct: "Pelle" },
+                { question: "Quale sostanza intrappola i microbi?", options: ["Muco", "Saliva", "Succhi gastrici", "Sangue"], correct: "Muco" },
+                { question: "Quali cellule sono nel sangue per l’immunità innata?", options: ["Globuli bianchi", "Globuli rossi", "Piastrine", "Linfociti"], correct: "Globuli bianchi" },
+                { question: "Quale immunità usa i linfociti?", options: ["Specifica", "Innata", "Meccanica", "Chimica"], correct: "Specifica" },
+                { question: "Quale organo linfatico filtra il sangue?", options: ["Milza", "Polmoni", "Fegato", "Reni"], correct: "Milza" },
+                { question: "Dove maturano i linfociti T?", options: ["Timo", "Pelle", "Stomaco", "Cuore"], correct: "Timo" },
+                { question: "Attraverso cosa circola la linfa?", options: ["Vasi linfatici", "Arterie", "Vene", "Capillari"], correct: "Vasi linfatici" },
+                { question: "Chi produce i globuli bianchi?", options: ["Sistema emopoietico", "Fegato", "Milza", "Polmoni"], correct: "Sistema emopoietico" },
+                { question: "Quale sistema difende dai patogeni?", options: ["Immunitario", "Nervoso", "Circolatorio", "Endocrino"], correct: "Immunitario" },
+                { question: "Quale meccanismo crea la memoria immunitaria?", options: ["Immunità specifica", "Immunità innata", "Pelle", "Muco"], correct: "Immunità specifica" },
+                { question: "Quale cellula trasporta l’ossigeno?", options: ["Globuli rossi", "Globuli bianchi", "Piastrine", "Linfociti"], correct: "Globuli rossi" },
+                { question: "Quale cellula ripara le lesioni?", options: ["Piastrine", "Globuli bianchi", "Globuli rossi", "Linfociti"], correct: "Piastrine" },
+                { question: "Quale fluido contiene i linfociti?", options: ["Linfa", "Sangue", "Saliva", "Muco"], correct: "Linfa" },
+                { question: "Quale organo linfatico filtra i patogeni?", options: ["Linfonodi", "Timo", "Milza", "Pelle"], correct: "Linfonodi" },
+                { question: "Quale meccanismo innato usa la saliva?", options: ["Immunità innata", "Immunità specifica", "Memoria", "Linfociti"], correct: "Immunità innata" },
+                { question: "Dove viene distribuito l’ossigeno?", options: ["Cellule", "Polmoni", "Fegato", "Cuore"], correct: "Cellule" },
+                { question: "Quale cellula elimina l’anidride carbonica?", options: ["Globuli rossi", "Piastrine", "Globuli bianchi", "Linfa"], correct: "Globuli rossi" },
+                { question: "Quale tessuto contiene i linfociti?", options: ["Linfonodi", "Pelle", "Sangue", "Mucosa"], correct: "Linfonodi" },
+                { question: "Quale sistema produce le piastrine?", options: ["Emopoietico", "Linfatico", "Circolatorio", "Nervoso"], correct: "Emopoietico" },
+                { question: "Quale barriera intrappola i microbi?", options: ["Muco", "Pelle", "Sangue", "Linfa"], correct: "Muco" },
+                { question: "Quale fluido è ricco di globuli bianchi?", options: ["Linfa", "Muco", "Saliva", "Succhi gastrici"], correct: "Linfa" },
+                { question: "Quale cellula riconosce i patogeni specifici?", options: ["Linfociti", "Globuli rossi", "Piastrine", "Neutrofili"], correct: "Linfociti" },
+                { question: "Quale immunità usa i succhi gastrici?", options: ["Innata", "Specifica", "Acquisita", "Passiva"], correct: "Innata" },
+                { question: "Quale organo linfatico è nel torace?", options: ["Timo", "Milza", "Linfonodi", "Pelle"], correct: "Timo" },
+                { question: "Quale meccanismo usa la pelle?", options: ["Immunità innata", "Immunità specifica", "Memoria", "Linfociti"], correct: "Immunità innata" },
+                { question: "Dove circolano le cellule immunitarie?", options: ["Vasi sanguigni", "Vasi linfatici", "Capillari", "Arterie"], correct: "Vasi sanguigni" },
+                { question: "Quale cellula previene le emorragie?", options: ["Piastrine", "Globuli bianchi", "Globuli rossi", "Linfociti"], correct: "Piastrine" },
+                { question: "Quale organo linfatico è nell’addome?", options: ["Milza", "Timo", "Linfonodi", "Pelle"], correct: "Milza" },
+                { question: "Quale sistema collega linfa e sangue?", options: ["Emopoietico", "Linfatico", "Circolatorio", "Nervoso"], correct: "Emopoietico" }
+            ],
+            // Quiz 4
+            [
+                { question: "Quale immunità è non specifica?", options: ["Innata", "Specifica", "Acquisita", "Passiva"], correct: "Innata" },
+                { question: "Quale barriera impedisce l’ingresso dei patogeni?", options: ["Pelle", "Sangue", "Linfa", "Mucosa"], correct: "Pelle" },
+                { question: "Quale sostanza è parte dell’immunità innata?", options: ["Muco", "Saliva", "Succhi gastrici", "Linfociti"], correct: "Muco" },
+                { question: "Quali cellule combattono i microbi nel sangue?", options: ["Globuli bianchi", "Globuli rossi", "Piastrine", "Linfociti"], correct: "Globuli bianchi" },
+                { question: "Quale immunità riconosce patogeni specifici?", options: ["Specifica", "Innata", "Meccanica", "Chimica"], correct: "Specifica" },
+                { question: "Quale organo linfatico contiene linfociti?", options: ["Linfonodi", "Polmoni", "Fegato", "Reni"], correct: "Linfonodi" },
+                { question: "Dove maturano i linfociti T?", options: ["Timo", "Pelle", "Stomaco", "Cuore"], correct: "Timo" },
+                { question: "Dove circola la linfa?", options: ["Vasi linfatici", "Arterie", "Vene", "Capillari"], correct: "Vasi linfatici" },
+                { question: "Quale sistema produce le piastrine?", options: ["Emopoietico", "Fegato", "Milza", "Polmoni"], correct: "Emopoietico" },
+                { question: "Quale sistema protegge dalle malattie?", options: ["Immunitario", "Nervoso", "Circolatorio", "Endocrino"], correct: "Immunitario" },
+                { question: "Quale immunità crea una memoria?", options: ["Specifica", "Innata", "Pelle", "Muco"], correct: "Specifica" },
+                { question: "Quale cellula trasporta l’ossigeno?", options: ["Globuli rossi", "Globuli bianchi", "Piastrine", "Linfociti"], correct: "Globuli rossi" },
+                { question: "Quale cellula previene le emorragie?", options: ["Piastrine", "Globuli bianchi", "Globuli rossi", "Linfociti"], correct: "Piastrine" },
+                { question: "Quale fluido trasporta i linfociti?", options: ["Linfa", "Sangue", "Saliva", "Muco"], correct: "Linfa" },
+                { question: "Quale organo linfatico filtra il sangue?", options: ["Milza", "Timo", "Linfonodi", "Pelle"], correct: "Milza" },
+                { question: "Quale meccanismo innato usa la saliva?", options: ["Immunità innata", "Immunità specifica", "Memoria", "Linfociti"], correct: "Immunità innata" },
+                { question: "Dove viene raccolta l’anidride carbonica?", options: ["Cellule", "Polmoni", "Fegato", "Cuore"], correct: "Cellule" },
+                { question: "Quale cellula elimina l’anidride carbonica?", options: ["Globuli rossi", "Piastrine", "Globuli bianchi", "Linfa"], correct: "Globuli rossi" },
+                { question: "Quale organo è specializzato per l’immunità specifica?", options: ["Timo", "Pelle", "Sangue", "Mucosa"], correct: "Timo" },
+                { question: "Quale sistema sintetizza i globuli bianchi?", options: ["Emopoietico", "Linfatico", "Circolatorio", "Nervoso"], correct: "Emopoietico" },
+                { question: "Quale meccanismo innato usa il muco?", options: ["Immunità innata", "Immunità specifica", "Memoria", "Linfociti"], correct: "Immunità innata" },
+                { question: "Quale fluido è simile al sangue?", options: ["Linfa", "Muco", "Saliva", "Succhi gastrici"], correct: "Linfa" },
+                { question: "Quale cellula crea la memoria immunitaria?", options: ["Linfociti", "Globuli rossi", "Piastrine", "Neutrofili"], correct: "Linfociti" },
+                { question: "Quale immunità usa i succhi gastrici?", options: ["Innata", "Specifica", "Acquisita", "Passiva"], correct: "Innata" },
+                { question: "Quale organo linfatico è nel torace?", options: ["Timo", "Milza", "Linfonodi", "Pelle"], correct: "Timo" },
+                { question: "Quale meccanismo usa la pelle?", options: ["Immunità innata", "Immunità specifica", "Memoria", "Linfociti"], correct: "Immunità innata" },
+                { question: "Dove circolano le cellule nel sangue?", options: ["Vasi sanguigni", "Vasi linfatici", "Capillari", "Arterie"], correct: "Vasi sanguigni" },
+                { question: "Quale cellula coagula il sangue?", options: ["Piastrine", "Globuli bianchi", "Globuli rossi", "Linfociti"], correct: "Piastrine" },
+                { question: "Quale organo linfatico filtra i patogeni?", options: ["Linfonodi", "Timo", "Milza", "Pelle"], correct: "Linfonodi" },
+                { question: "Quale sistema produce globuli rossi?", options: ["Emopoietico", "Linfatico", "Circolatorio", "Nervoso"], correct: "Emopoietico" }
+            ],
+            // Quiz 5
+            [
+                { question: "Quale immunità è altamente specializzata?", options: ["Specifica", "Innata", "Meccanica", "Chimica"], correct: "Specifica" },
+                { question: "Quale barriera è parte dell’immunità innata?", options: ["Pelle", "Sangue", "Linfa", "Mucosa"], correct: "Pelle" },
+                { question: "Quale sostanza intrappola i microbi?", options: ["Muco", "Saliva", "Succhi gastrici", "Sangue"], correct: "Muco" },
+                { question: "Quali cellule sono nel sangue per l’immunità innata?", options: ["Globuli bianchi", "Globuli rossi", "Piastrine", "Linfociti"], correct: "Globuli bianchi" },
+                { question: "Quale immunità usa i linfociti?", options: ["Specifica", "Innata", "Meccanica", "Chimica"], correct: "Specifica" },
+                { question: "Quale organo linfatico filtra il sangue?", options: ["Milza", "Polmoni", "Fegato", "Reni"], correct: "Milza" },
+                { question: "Dove maturano i linfociti T?", options: ["Timo", "Pelle", "Stomaco", "Cuore"], correct: "Timo" },
+                { question: "Attraverso cosa circola la linfa?", options: ["Vasi linfatici", "Arterie", "Vene", "Capillari"], correct: "Vasi linfatici" },
+                { question: "Chi produce i globuli bianchi?", options: ["Sistema emopoietico", "Fegato", "Milza", "Polmoni"], correct: "Sistema emopoietico" },
+                { question: "Quale sistema difende dai patogeni?", options: ["Immunitario", "Nervoso", "Circolatorio", "Endocrino"], correct: "Immunitario" },
+                { question: "Quale meccanismo crea la memoria immunitaria?", options: ["Immunità specifica", "Immunità innata", "Pelle", "Muco"], correct: "Immunità specifica" },
+                { question: "Quale cellula trasporta l’ossigeno?", options: ["Globuli rossi", "Globuli bianchi", "Piastrine", "Linfociti"], correct: "Globuli rossi" },
+                { question: "Quale cellula previene le emorragie?", options: ["Piastrine", "Globuli bianchi", "Globuli rossi", "Linfociti"], correct: "Piastrine" },
+                { question: "Quale fluido contiene i linfociti?", options: ["Linfa", "Sangue", "Saliva", "Muco"], correct: "Linfa" },
+                { question: "Quale organo linfatico filtra i patogeni?", options: ["Linfonodi", "Timo", "Milza", "Pelle"], correct: "Linfonodi" },
+                { question: "Quale meccanismo innato usa la saliva?", options: ["Immunità innata", "Immunità specifica", "Memoria", "Linfociti"], correct: "Immunità innata" },
+                { question: "Dove viene distribuito l’ossigeno?", options: ["Cellule", "Polmoni", "Fegato", "Cuore"], correct: "Cellule" },
+                { question: "Quale cellula elimina l’anidride carbonica?", options: ["Globuli rossi", "Piastrine", "Globuli bianchi", "Linfa"], correct: "Globuli rossi" },
+                { question: "Quale tessuto contiene i linfociti?", options: ["Linfonodi", "Pelle", "Sangue", "Mucosa"], correct: "Linfonodi" },
+                { question: "Quale sistema produce le piastrine?", options: ["Emopoietico", "Linfatico", "Circolatorio", "Nervoso"], correct: "Emopoietico" },
+                { question: "Quale barriera intrappola i microbi?", options: ["Muco", "Pelle", "Sangue", "Linfa"], correct: "Muco" },
+                { question: "Quale fluido è ricco di globuli bianchi?", options: ["Linfa", "Muco", "Saliva", "Succhi gastrici"], correct: "Linfa" },
+                { question: "Quale cellula riconosce i patogeni specifici?", options: ["Linfociti", "Globuli rossi", "Piastrine", "Neutrofili"], correct: "Linfociti" },
+                { question: "Quale immunità usa i succhi gastrici?", options: ["Innata", "Specifica", "Acquisita", "Passiva"], correct: "Innata" },
+                { question: "Quale organo linfatico è nel torace?", options: ["Timo", "Milza", "Linfonodi", "Pelle"], correct: "Timo" },
+                { question: "Quale meccanismo usa la pelle?", options: ["Immunità innata", "Immunità specifica", "Memoria", "Linfociti"], correct: "Immunità innata" },
+                { question: "Dove circolano le cellule immunitarie?", options: ["Vasi sanguigni", "Vasi linfatici", "Capillari", "Arterie"], correct: "Vasi sanguigni" },
+                { question: "Quale cellula coagula il sangue?", options: ["Piastrine", "Globuli bianchi", "Globuli rossi", "Linfociti"], correct: "Piastrine" },
+                { question: "Quale organo linfatico è nell’addome?", options: ["Milza", "Timo", "Linfonodi", "Pelle"], correct: "Milza" },
+                { question: "Quale sistema collega linfa e sangue?", options: ["Emopoietico", "Linfatico", "Circolatorio", "Nervoso"], correct: "Emopoietico" }
+            ]
+        ];
+
+        let currentQuiz = null;
+        let currentQuestions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let timeLeft = 30 * 60; // 30 minuti in secondi
+        let timerInterval;
+
+        // Genera le palline numerate
+        const ballsContainer = document.getElementById('quiz-balls');
+        for (let i = 1; i <= 30; i++) {
+            const ball = document.createElement('div');
+            ball.className = 'quiz-ball';
+            ball.id = `ball-${i}`;
+            ball.innerText = i;
+            ballsContainer.appendChild(ball);
+        }
+
+        // Timer
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                document.getElementById('quiz-timer').innerText = `Tempo rimanente: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    endQuiz();
+                }
+            }, 1000);
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function selectQuiz() {
+            const quizSelect = document.getElementById('quiz-select');
+            const selectedQuiz = parseInt(quizSelect.value);
+            if (selectedQuiz === 0) {
+                document.getElementById('quiz-timer').style.display = 'none';
+                document.getElementById('quiz-balls').style.display = 'none';
+                document.getElementById('quiz-question').innerText = '';
+                document.getElementById('quiz-options').innerHTML = '';
+                document.getElementById('quiz-feedback').style.display = 'none';
+                document.getElementById('quiz-result').innerHTML = '';
+                document.getElementById('retry-button').style.display = 'none';
+                clearInterval(timerInterval);
+                return;
+            }
+
+            currentQuiz = selectedQuiz - 1;
+            resetQuiz();
+        }
+
+        function loadQuizQuestion() {
+            const questionElement = document.getElementById('quiz-question');
+            const optionsElement = document.getElementById('quiz-options');
+            const feedbackElement = document.getElementById('quiz-feedback');
+            const resultElement = document.getElementById('quiz-result');
+            const retryButton = document.getElementById('retry-button');
+
+            if (currentQuestionIndex >= currentQuestions.length) {
+                endQuiz();
+                return;
+            }
+
+            const currentQuestion = currentQuestions[currentQuestionIndex];
+            questionElement.innerText = `Domanda ${currentQuestionIndex + 1}: ${currentQuestion.question}`;
+            optionsElement.innerHTML = '';
+            feedbackElement.style.display = 'none';
+            resultElement.innerHTML = '';
+            retryButton.style.display = 'none';
+
+            const shuffledOptions = shuffleArray([...currentQuestion.options]);
+            shuffledOptions.forEach(option => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'quiz-option';
+                optionElement.innerText = option;
+                optionElement.addEventListener('click', () => checkAnswer(option, currentQuestion.correct));
+                optionsElement.appendChild(optionElement);
+            });
+        }
+
+        function checkAnswer(selected, correct) {
+            const feedbackElement = document.getElementById('quiz-feedback');
+            feedbackElement.style.display = 'block';
+            const currentBall = document.getElementById(`ball-${currentQuestionIndex + 1}`);
+            if (selected === correct) {
+                currentBall.classList.add('correct');
+                feedbackElement.innerText = 'Corretto! Ottimo lavoro!';
+                feedbackElement.className = 'quiz-feedback correct';
+                score++;
+            } else {
+                currentBall.classList.add('incorrect');
+                feedbackElement.innerText = `Sbagliato. La risposta corretta è: ${correct}.`;
+                feedbackElement.className = 'quiz-feedback incorrect';
+            }
+
+            setTimeout(() => {
+                currentQuestionIndex++;
+                loadQuizQuestion();
+            }, 1500);
+        }
+
+        function endQuiz() {
+            clearInterval(timerInterval);
+            const questionElement = document.getElementById('quiz-question');
+            const optionsElement = document.getElementById('quiz-options');
+            const feedbackElement = document.getElementById('quiz-feedback');
+            const resultElement = document.getElementById('quiz-result');
+            const timerElement = document.getElementById('quiz-timer');
+            const retryButton = document.getElementById('retry-button');
+
+            questionElement.innerText = 'Quiz Completato!';
+            optionsElement.innerHTML = '';
+            feedbackElement.style.display = 'none';
+            timerElement.style.display = 'none';
+            retryButton.style.display = 'block';
+
+            if (score >= 21) {
+                resultElement.innerText = `Hai superato il test! Punteggio: ${score}/30`;
+                resultElement.style.color = '#00ff00';
+            } else {
+                resultElement.innerText = `Torna a studiare! Punteggio: ${score}/30`;
+                resultElement.style.color = '#ff0000';
+            }
+        }
+
+        function resetQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            timeLeft = 30 * 60;
+            document.getElementById('quiz-timer').style.display = 'block';
+            document.getElementById('quiz-timer').innerText = 'Tempo rimanente: 30:00';
+            document.getElementById('quiz-balls').style.display = 'flex';
+            document.querySelectorAll('.quiz-ball').forEach(ball => {
+                ball.classList.remove('correct');
+                ball.classList.remove('incorrect');
+            });
+            currentQuestions = shuffleArray([...allQuestions[currentQuiz]]);
+            clearInterval(timerInterval);
+            startTimer();
+            loadQuizQuestion();
+        }
+
+        document.getElementById('retry-button').addEventListener('click', resetQuiz);
+    </script>
+</body>
+</html>
